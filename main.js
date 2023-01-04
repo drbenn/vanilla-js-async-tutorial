@@ -334,7 +334,7 @@ btn.addEventListener('click', function () {
 
 
 
-// ASYNC/AWAIT - and adding traditional try/catch statements---------------------------------------------------------------------------------
+// ASYNC/AWAIT - and adding traditional try/catch statements(try/catch should always be added to async await functions) --------------------------------
 
 // Basic try catch format
 // try {
@@ -345,17 +345,67 @@ btn.addEventListener('click', function () {
 //   alert(err.message)
 // }
 
+// const whereAmI = async function(country) {
+//   try {
+//     const res = await fetch(`https://restcountries.com/v3.1/name/${country}`); 
+//     console.log(res);
+//     const data = await res.json();
+//     console.log(data[0]);
+//   }
+//   catch (err) {
+//     console.error(err)
+//   }
+// }
+// whereAmI('portugal')
+// console.log('FIRST');
+
+
+
+
+
+// ASYNC/AWAIT - Returning Values ---------------------------------------------------------------------------------
+
 const whereAmI = async function(country) {
-  try {
     const res = await fetch(`https://restcountries.com/v3.1/name/${country}`); 
     console.log(res);
     const data = await res.json();
     console.log(data[0]);
-  }
-  catch (err) {
+    return `The capital is ${data[0]?.capital[0]}`
+}
+
+// console.log('1: Will get location');
+// const city = whereAmI('portugal') 
+// console.log(city); //logs pending promise bc run before async returns value
+// console.log('3: Finished getting location');
+
+// console.log('1: Will get location');
+// whereAmI('portugal').then(city => console.log(city)) // can do this but mixing old promises(.then) and async function...cleaner to just use async
+// console.log('3: Finished getting location');
+
+// best to use iffy async function
+// console.log('1: Will get location');
+// (async function () {
+//   try {
+//     const city = await whereAmI('portugal');
+//     console.log(`2: ${city}`); 
+//   } catch (err) {
+//     console.error(`2: ${err.message}`);
+//   }
+//   console.log(`3: Finished getting the location`);
+// })();
+
+
+
+// ASYNC/AWAIT - Running promises in parallel ------------------------------------------------------------------------
+
+const get3Countries = async function(c1, c2, c3) {
+  try {
+    const [data1] = await getJSON(`https://restcountries.com/v3.1/name/${c1}`);
+    const [data2] = await getJSON(`https://restcountries.com/v3.1/name/${c2}`);
+    const [data3] = await getJSON(`https://restcountries.com/v3.1/name/${c3}`);
+    console.log(data1.capital[0], data2.capital[0], data3.capital[0]);
+  } catch(err) {
     console.error(err)
   }
 }
-whereAmI('portugal')
-console.log('FIRST');
-
+get3Countries('portugal', 'canada', 'tanzania')
