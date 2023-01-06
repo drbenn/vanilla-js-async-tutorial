@@ -398,14 +398,84 @@ const whereAmI = async function(country) {
 
 // ASYNC/AWAIT - Running promises in parallel ------------------------------------------------------------------------
 
-const get3Countries = async function(c1, c2, c3) {
-  try {
-    const [data1] = await getJSON(`https://restcountries.com/v3.1/name/${c1}`);
-    const [data2] = await getJSON(`https://restcountries.com/v3.1/name/${c2}`);
-    const [data3] = await getJSON(`https://restcountries.com/v3.1/name/${c3}`);
-    console.log(data1.capital[0], data2.capital[0], data3.capital[0]);
-  } catch(err) {
-    console.error(err)
-  }
-}
-get3Countries('portugal', 'canada', 'tanzania')
+// const get3Countries = async function(c1, c2, c3) {
+//   // try alone with seperate await functions will run each fetch in sequence
+//   // try {
+//   //   const [data1] = await getJSON(`https://restcountries.com/v3.1/name/${c1}`);
+//   //   const [data2] = await getJSON(`https://restcountries.com/v3.1/name/${c2}`);
+//   //   const [data3] = await getJSON(`https://restcountries.com/v3.1/name/${c3}`);
+//   //   console.log(data1.capital[0], data2.capital[0], data3.capital[0]);
+//   // } 
+
+//   // instead use Promise.all to return each fetch at the same time under 1 data point
+//     try {
+//     const data = await Promise.all([
+//       getJSON(`https://restcountries.com/v3.1/name/${c1}`),
+//       getJSON(`https://restcountries.com/v3.1/name/${c2}`),
+//       getJSON(`https://restcountries.com/v3.1/name/${c3}`)
+//     ])
+//     console.log(data.map(d => d[0].capital[0]));
+  
+  
+  
+//   } catch(err) {
+//     console.error(err)
+//   }
+// }
+// get3Countries('portugal', 'canada', 'tanzania')
+
+
+
+// Promise Combinators - Race, allSettled, any ------------------------------------------------------------------------
+
+
+
+// race - returns the first promise that is settled(can be either fulfilled or rejected promise)
+
+// (async function () {
+//   const res = await Promise.race([
+//     getJSON(`https://restcountries.com/v3.1/name/italy`),
+//     getJSON(`https://restcountries.com/v3.1/name/egypt`),
+//     getJSON(`https://restcountries.com/v3.1/name/mexico`),
+//   ]);
+//   console.log(res);
+// })();
+
+
+
+// allSettled - never shortcircuits, returns all, event if there is an error
+
+// Promise.allSettled([
+//   Promise.resolve('Success'),
+//   Promise.reject('ERROR'),
+//   Promise.resolve('Another success')
+// ]).then(res => console.log(res));
+
+
+
+// all - will shortcircuit if 1 error is present
+
+// Promise.all([
+//   Promise.resolve('Success'),
+//   Promise.reject('ERROR'),
+//   Promise.resolve('Another success')
+// ])
+// .then(res => console.log(res))
+// .catch(err => console.log(err))
+
+
+
+// any (ES2021) - returns first returned promise, and ignore rejected promises - so similar to race, but ignores errors...unless all promises are rejected
+
+Promise.any([
+  Promise.resolve('Success'),
+  Promise.reject('ERROR'),
+  Promise.resolve('Another success')
+])
+.then(res => console.log(res))
+.catch(err => console.log(err))
+
+
+
+// see module.js for top level await, which ONLY WORKS IN MODULES!
+// html must have type="module" for this to register ie <script type="module" src="/module.js"></script>
